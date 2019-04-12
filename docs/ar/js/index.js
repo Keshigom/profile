@@ -97,12 +97,12 @@ function initScene() {
     // モデル1（富士山）
     // THREE.CylinderGeometry(topRadius, buttomRadius, height, segmentsRadius, segmentsHeight, openEnded)
     //　大きさに注意,高さ10だと大きすぎる
-    var geometry = new THREE.CylinderGeometry(0.1, 0.5, 1, 16, 16, true);
+    let geometry = new THREE.CylinderGeometry(0.1, 0.5, 1, 16, 16, true);
 
     const textureLoader = new THREE.TextureLoader();
     const textureFuji = textureLoader.load("assets/textures/fuji.jpg");
 
-    var materia1 = new THREE.MeshBasicMaterial({
+    let materia1 = new THREE.MeshBasicMaterial({
         map: textureFuji
     });
 
@@ -135,91 +135,17 @@ function initScene() {
     plane.rotation.set(-Math.PI / 2, 0, 0);
     marker1.add(plane);
 
+    // ドーナツを作成
+    geometry = new THREE.TorusKnotGeometry(0.1, 0.1, 100, 16);
+    // マテリアルを作成
+    material = new THREE.MeshToonMaterial({ color: 0x6699FF });
+    // メッシュを作成
+    const mesh = new THREE.Mesh(geometry, material);
+    // 3D空間にメッシュを追加
+    mesh.position.set(0, 0.3, 0);
+    marker1.add(mesh);
 
 
-    //モデル3　VRM
-
-    //アニメーション読み込み
-    //別のGLTFモデルから流用
-    //モーション元はmixamo
-    const animationFiles = ['assets/motions/wave.gltf'];
-    const animationLoader = new THREE.GLTFLoader();
-    for (let i = 0; i < animationFiles.length; ++i) {
-        animationLoader.load(animationFiles[i], function () { console.log('Animation ' + i + ' loaded.') });
-    }
-
-    let loadModelIndex = 0;
-    let loadAnimationIndex = 0;
-    var loader = new THREE.VRMLoader();
-
-    loader.load('assets/models/Vim.vrm', function (vrm) {
-
-        vrm.scene.name = "Vim";
-        vrm.scene.traverse(function (object) {
-
-            if (object.material) {
-
-                if (Array.isArray(object.material)) {
-
-                    for (var i = 0, il = object.material.length; i < il; i++) {
-
-                        let material = new THREE.MeshBasicMaterial();
-                        THREE.Material.prototype.copy.call(material, object.material[i]);
-                        material.color.copy(object.material[i].color);
-                        material.map = object.material[i].map;
-                        material.lights = false;
-                        material.skinning = object.material[i].skinning;
-                        material.morphTargets = object.material[i].morphTargets;
-                        material.morphNormals = object.material[i].morphNormals;
-
-                        object.material[i] = material;
-
-                    }
-
-                } else {
-
-                    let material = new THREE.MeshBasicMaterial();
-                    THREE.Material.prototype.copy.call(material, object.material);
-                    material.color.copy(object.material.color);
-                    material.map = object.material.map;
-                    material.lights = false;
-                    material.skinning = object.material.skinning;
-                    material.morphTargets = object.material.morphTargets;
-                    material.morphNormals = object.material.morphNormals;
-                    object.material = material;
-
-                }
-
-            }
-
-        });
-
-        //Vroidモデル用
-        //表情のブレンドシェイプ
-        let morphTarget = vrm.scene.getObjectByName("Face", true);
-        //口角
-        morphTarget.morphTargetInfluences[1] = 0;
-
-        vrm.scene.position.set(0, 0, 0);
-        vrm.scene.scale.set(1, 1, 1);
-        vrm.scene.rotation.set(0, Math.PI, 0);
-        marker1.add(vrm.scene);
-
-        //アニメーションの紐付け
-        let mixer = new THREE.AnimationMixer(vrm.scene);
-        animationLoader.load(animationFiles[loadAnimationIndex], function (gltf) {
-            const animations = gltf.animations;
-            if (animations && animations.length) {
-                for (let animation of animations) {
-                    correctBoneName(animation.tracks);
-                    correctCoordinate(animation.tracks);
-                    mixer.clipAction(animation).play();
-                }
-            }
-        });
-        mixers.push(mixer);
-
-    });
 
 }
 
