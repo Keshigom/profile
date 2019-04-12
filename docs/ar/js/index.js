@@ -87,7 +87,7 @@ function initScene() {
     var marker1 = new THREE.Group();
     var controls = new THREEx.ArMarkerControls(context, marker1, {
         type: "pattern",
-        patternUrl: "assets/markers/qr.patt",
+        patternUrl: "assets/markers/WebAR.patt",
     });
 
     //シーンにマーカーを追加
