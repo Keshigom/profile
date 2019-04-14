@@ -94,47 +94,6 @@ function initScene() {
     scene.add(marker1);
     //このmarker1にモデルを追加していく
 
-    // モデル1（富士山）
-    // THREE.CylinderGeometry(topRadius, buttomRadius, height, segmentsRadius, segmentsHeight, openEnded)
-    //　大きさに注意,高さ10だと大きすぎる
-    let geometry = new THREE.CylinderGeometry(0.1, 0.5, 1, 16, 16, true);
-
-    const textureLoader = new THREE.TextureLoader();
-    const textureFuji = textureLoader.load("assets/textures/fuji.jpg");
-
-    let materia1 = new THREE.MeshBasicMaterial({
-        map: textureFuji
-    });
-
-    //メッシュの生成
-    //グローバル変数
-    meshFuji = new THREE.Mesh(geometry, materia1);
-    meshFuji.overdraw = true; //CHECK
-    meshFuji.name = "fuji";
-    meshFuji.position.set(0, 0.5, -1);
-    marker1.add(meshFuji);
-
-    //頂上部分
-    geometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 16, 16, false);
-    materia1 = new THREE.MeshBasicMaterial(
-        { color: 0xFFFFFF }
-    );
-    var meshFujiTop = new THREE.Mesh(geometry, materia1);
-    meshFujiTop.position.set(0, 0.5, -1);
-    marker1.add(meshFujiTop);
-
-    //モデル２　メッセージ
-    const textureMessage = textureLoader.load("assets/textures/message.png");
-    var mat = new THREE.MeshBasicMaterial({
-        map: textureMessage
-    });
-    geometry = new THREE.PlaneGeometry(1, 1);
-    const plane = new THREE.Mesh(geometry, mat);
-    plane.overdraw = true; //CHECK
-    plane.position.set(0, 0.3, 0.7);
-    plane.rotation.set(-Math.PI / 2, 0, 0);
-    marker1.add(plane);
-
     // ドーナツを作成
     geometry = new THREE.TorusKnotGeometry(0.1, 0.1, 100, 16);
     // マテリアルを作成
@@ -142,10 +101,32 @@ function initScene() {
     // メッシュを作成
     const mesh = new THREE.Mesh(geometry, material);
     // 3D空間にメッシュを追加
-    mesh.position.set(0, 0.3, 0);
+    mesh.position.set(0, 0.3, -1);
     marker1.add(mesh);
 
+    const cardGeometry = new THREE.PlaneGeometry(2.15, 1.3);
+    const cardMaterialRed = new THREE.MeshLambertMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
+    const cardMaterialBlue = new THREE.MeshLambertMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
+    const cardMaterialGreen = new THREE.MeshLambertMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
 
+    let cards = [];
+    let cardNum = 0;
+    cards.push(new THREE.Mesh(cardGeometry, cardMaterialRed));
+    cards[cardNum].rotation.x = Math.PI / 2;
+    cards[cardNum].position.set(-0.5, 0.25, 0);
+    marker1.add(cards[cardNum]);
+
+    cardNum++;
+    cards.push(new THREE.Mesh(cardGeometry, cardMaterialBlue));
+    cards[cardNum].rotation.x = Math.PI / 2;
+    cards[cardNum].position.set(-0.5, 0.5, 0);
+    marker1.add(cards[cardNum]);
+
+    cardNum++
+    cards.push(new THREE.Mesh(cardGeometry, cardMaterialGreen));
+    cards[cardNum].rotation.x = Math.PI / 2;
+    cards[cardNum].position.set(-0.5, 0.75, 0);
+    marker1.add(cards[cardNum]);
 
 }
 
