@@ -80,7 +80,6 @@ const clock = new THREE.Clock();
 let mixers = new Array();
 
 
-initScene();
 function initScene() {
 
     //マーカーを登録
@@ -109,24 +108,38 @@ function initScene() {
     const cardMaterialBlue = new THREE.MeshLambertMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
     const cardMaterialGreen = new THREE.MeshLambertMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
 
-    let cards = [];
+    const profileVideo = document.getElementById('profile');
+    textureProfile = new THREE.VideoTexture(profileVideo);
+    textureProfile.minFilter = THREE.LinearFilter;
+    textureProfile.magFilter = THREE.LinearFilter;
+    textureProfile.format = THREE.RGBFormat;
+    const profileCardMaterial = new THREE.MeshBasicMaterial({ map: textureProfile, overdraw: true, side: THREE.DoubleSide });
+
+    var loader = new THREE.TextureLoader();
+
+    cards = [];
     let cardNum = 0;
-    cards.push(new THREE.Mesh(cardGeometry, cardMaterialRed));
-    cards[cardNum].rotation.x = Math.PI / 2;
+    const textureVauta = loader.load('../assets/textures/vauta.png');
+    const materialVauta = new THREE.MeshLambertMaterial({ map: textureVauta, side: THREE.DoubleSide });
+    cards.push(new THREE.Mesh(cardGeometry, materialVauta));
+    cards[cardNum].rotation.x = -Math.PI / 2;
     cards[cardNum].position.set(-0.5, 0.25, 0);
+    cards[cardNum].name = "vauta";
     marker1.add(cards[cardNum]);
 
     cardNum++;
     cards.push(new THREE.Mesh(cardGeometry, cardMaterialBlue));
-    cards[cardNum].rotation.x = Math.PI / 2;
+    cards[cardNum].rotation.x = -Math.PI / 2;
     cards[cardNum].position.set(-0.5, 0.5, 0);
     marker1.add(cards[cardNum]);
 
     cardNum++
-    cards.push(new THREE.Mesh(cardGeometry, cardMaterialGreen));
-    cards[cardNum].rotation.x = Math.PI / 2;
+    cards.push(new THREE.Mesh(cardGeometry, profileCardMaterial));
+    cards[cardNum].rotation.x = -Math.PI / 2;
     cards[cardNum].position.set(-0.5, 0.75, 0);
+    cards[cardNum].name = "profile";
     marker1.add(cards[cardNum]);
+
 
 }
 
@@ -134,20 +147,21 @@ function initScene() {
 //　Tween アニメーション
 //---------------------------------------------------------------------
 
-// meshFuji 
+// card1 
 var twIni1 = { posZ: 0, rotY: 0 };                      // 初期パラメータ
 var twVal1 = { posZ: 0, rotY: 0 };                      // tweenによって更新されるパラメータ
-var twFor1 = { posZ: 0, rotY: 4 * Math.PI };              // ターゲットパラメータ
+var twFor1 = { posZ: 1.4 };              // ターゲットパラメータ
 // 「行き」のアニメーション
 function tween1() {
     var tween = new TWEEN.Tween(twVal1)                 // tweenオブジェクトを作成
         .to(twFor1, 2000)                                   // ターゲットと到達時間
         .easing(TWEEN.Easing.Back.Out)                      // イージング
         .onUpdate(function () {                              // フレーム更新時の処理
-            meshFuji.rotation.y = twVal1.rotY;                   // 回転を変更
+            cards[0].position.z = twVal1.posZ;                   // 位置を変更
+
         })
         .onComplete(function () {                            // アニメーション完了時の処理
-            tween1_back();                                    // 「帰り」のアニメーションを実行
+            //tween1_back(index);                                    // 「帰り」のアニメーションを実行
         })
         .delay(0)                                           // 開始までの遅延時間
         .start();                                           // tweenアニメーション開始
@@ -158,7 +172,40 @@ function tween1_back() {
         .to(twIni1, 2000)                                   // ターゲットを初期パラメータに設定
         .easing(TWEEN.Easing.Back.InOut)
         .onUpdate(function () {
-            meshFuji.rotation.y = twVal1.rotY;
+            cards[0].position.z = twVal1.posZ;                   // 位置を変更
+        })
+        .onComplete(function () {
+            // なにもしない
+        })
+        .delay(100)
+        .start();
+}
+
+var twIni2 = { posZ: 0, rotY: 0 };                      // 初期パラメータ
+var twVal2 = { posZ: 0, rotY: 0 };                      // tweenによって更新されるパラメータ
+var twFor2 = { posZ: 1.4 };              // ターゲットパラメータ
+// 「行き」のアニメーション
+function tween2() {
+    var tween = new TWEEN.Tween(twVal2)                 // tweenオブジェクトを作成
+        .to(twFor2, 2000)                                   // ターゲットと到達時間
+        .easing(TWEEN.Easing.Back.Out)                      // イージング
+        .onUpdate(function () {                              // フレーム更新時の処理
+            cards[1].position.z = twVal2.posZ;                   // 位置を変更
+
+        })
+        .onComplete(function () {                            // アニメーション完了時の処理
+            //tween1_back(index);                                    // 「帰り」のアニメーションを実行
+        })
+        .delay(0)                                           // 開始までの遅延時間
+        .start();                                           // tweenアニメーション開始
+}
+// 「帰り」のアニメーション    
+function tween2_back() {
+    var tween = new TWEEN.Tween(twVal2)
+        .to(twIni1, 2000)                                   // ターゲットを初期パラメータに設定
+        .easing(TWEEN.Easing.Back.InOut)
+        .onUpdate(function () {
+            cards[1].position.z = twVal2.posZ;                   // 位置を変更
         })
         .onComplete(function () {
             // なにもしない
@@ -187,9 +234,32 @@ window.addEventListener("mousedown", function (ret) {
 // ピックされた対象に応じた処理
 function picked(objName) {
     switch (objName) {
-        case "fuji":
-            tween1();
+        case "profile":
+            changeState();
             break;
+        case "vauta":
+            window.location.href = 'http://vauta.netlify.com';
+            break;
+        default:
+            break;
+    }
+}
+
+let state = 0;
+function changeState() {
+    switch (state) {
+        case 0:
+            tween1();
+            state = 1;
+            break;
+        case 1:
+            tween2();
+            state = 2;
+            break;
+        case 2:
+            tween1_back();
+            tween2_back();
+            state = 0;
         default:
             break;
     }
@@ -215,4 +285,8 @@ function renderScene() {
     renderer.render(scene, camera);                     // レンダリング実施
 
 }
-renderScene();
+
+window.onload = function () {
+    initScene();
+    renderScene();
+};
