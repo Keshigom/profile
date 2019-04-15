@@ -134,7 +134,7 @@ function initScene() {
 
     cards = [];
     let cardNum = 0;
-    const textureVauta = loader.load('../assets/textures/vauta.png');
+    const textureVauta = loader.load('/assets/textures/vauta.png');
     const materialVauta = new THREE.MeshLambertMaterial({ map: textureVauta, side: THREE.DoubleSide });
     cards.push(new THREE.Mesh(cardGeometry, materialVauta));
     cards[cardNum].rotation.x = -Math.PI / 2;
