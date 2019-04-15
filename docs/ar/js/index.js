@@ -93,20 +93,35 @@ function initScene() {
     scene.add(marker1);
     //このmarker1にモデルを追加していく
 
-    // ドーナツを作成
-    geometry = new THREE.TorusKnotGeometry(0.1, 0.1, 100, 16);
-    // マテリアルを作成
-    material = new THREE.MeshToonMaterial({ color: 0x6699FF });
-    // メッシュを作成
-    const mesh = new THREE.Mesh(geometry, material);
-    // 3D空間にメッシュを追加
-    mesh.position.set(0, 0.3, -1);
-    marker1.add(mesh);
+
+
+    mono = new THREE.Group();
+    mono.position.set(1.1, 0.5, 0);
+    marker1.add(mono);
+
+    let geometryCyl = new THREE.CylinderGeometry(0.3, 0.3, 0.15, 16);
+    let materialWhite = new THREE.MeshToonMaterial({ color: 0xffffff });
+    let materialBlue = new THREE.MeshToonMaterial({ color: 0x0000ff });
+
+    const cylinder = new THREE.Mesh(geometryCyl, materialWhite);
+    cylinder.position.set(0, 0, -0.3)
+    mono.add(cylinder);
+
+    let geometryCube = new THREE.BoxGeometry(0.2, 0.2, 0.8);
+    const monoBody1 = new THREE.Mesh(geometryCube, materialBlue);
+    monoBody1.position.set(-0.2, 0, 0.1);
+    mono.add(monoBody1);
+    const monoBody2 = new THREE.Mesh(geometryCube, materialWhite);
+    monoBody2.position.set(0, 0, 0.1);
+    mono.add(monoBody2);
+    const monoBody3 = new THREE.Mesh(geometryCube, materialBlue);
+    monoBody3.position.set(0.2, 0, 0.1);
+    mono.add(monoBody3);
+
+    mono.scale.z = 0.9;
+    mono.scale.y = 1.2;
 
     const cardGeometry = new THREE.PlaneGeometry(2.15, 1.3);
-    const cardMaterialRed = new THREE.MeshLambertMaterial({ color: 0xFF0000, side: THREE.DoubleSide });
-    const cardMaterialBlue = new THREE.MeshLambertMaterial({ color: 0x0000ff, side: THREE.DoubleSide });
-    const cardMaterialGreen = new THREE.MeshLambertMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
 
     const profileVideo = document.getElementById('profile');
     textureProfile = new THREE.VideoTexture(profileVideo);
@@ -128,9 +143,12 @@ function initScene() {
     marker1.add(cards[cardNum]);
 
     cardNum++;
-    cards.push(new THREE.Mesh(cardGeometry, cardMaterialBlue));
+    const textureTwitter = loader.load('../assets/textures/twitter.png');
+    const materialTwitter = new THREE.MeshLambertMaterial({ map: textureTwitter, side: THREE.DoubleSide });
+    cards.push(new THREE.Mesh(cardGeometry, materialTwitter));
     cards[cardNum].rotation.x = -Math.PI / 2;
     cards[cardNum].position.set(-0.5, 0.5, 0);
+    cards[cardNum].name = "twitter";
     marker1.add(cards[cardNum]);
 
     cardNum++
@@ -240,6 +258,10 @@ function picked(objName) {
         case "vauta":
             window.location.href = 'http://vauta.netlify.com';
             break;
+        case "twitter":
+            window.location.href = 'https://twitter.com/ke4563';
+            break;
+
         default:
             break;
     }
@@ -278,6 +300,10 @@ function renderScene() {
     for (let i = 0, len = mixers.length; i < len; ++i) {
         mixers[i].update(delta);
     }
+
+    mono.rotation.x += 0.01;	// x軸方向に回転
+    mono.rotation.y += 0.01;	// y軸方向に回転
+    mono.rotation.z += 0.01;
 
     if (source.ready === false) { return; }             // メディアソースの準備ができていなければ抜ける
     context.update(source.domElement);                  // ARToolkitのコンテキストを更新
