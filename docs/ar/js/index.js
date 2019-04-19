@@ -143,12 +143,12 @@ function initScene() {
     marker1.add(cards[cardNum]);
 
     cardNum++;
-    const textureTwitter = loader.load('./assets/textures/twitter.png');
-    const materialTwitter = new THREE.MeshLambertMaterial({ map: textureTwitter, side: THREE.DoubleSide });
-    cards.push(new THREE.Mesh(cardGeometry, materialTwitter));
+    const textureToybox = loader.load('./assets/textures/toybox.png');
+    const materialToybox = new THREE.MeshLambertMaterial({ map: textureToybox, side: THREE.DoubleSide });
+    cards.push(new THREE.Mesh(cardGeometry, materialToybox));
     cards[cardNum].rotation.x = -Math.PI / 2;
     cards[cardNum].position.set(-0.5, 0.5, 0);
-    cards[cardNum].name = "twitter";
+    cards[cardNum].name = "toybox";
     marker1.add(cards[cardNum]);
 
     cardNum++
@@ -158,7 +158,14 @@ function initScene() {
     cards[cardNum].name = "profile";
     marker1.add(cards[cardNum]);
 
-
+    cardNum++;
+    const textureTwitter = loader.load('./assets/textures/twitter.png');
+    const materialTwitter = new THREE.MeshLambertMaterial({ map: textureTwitter, side: THREE.DoubleSide });
+    cards.push(new THREE.Mesh(cardGeometry, materialTwitter));
+    cards[cardNum].rotation.x = -Math.PI / 4;
+    cards[cardNum].position.set(-0.5, 1.2, -1.2);
+    cards[cardNum].name = "twitter";
+    marker1.add(cards[cardNum]);
 }
 
 //---------------------------------------------------------------------
@@ -261,7 +268,9 @@ function picked(objName) {
         case "twitter":
             window.location.href = 'https://twitter.com/ke4563';
             break;
-
+        case "toybox":
+            window.location.href = 'https://ke456.glideapp.io';
+            break;
         default:
             break;
     }
